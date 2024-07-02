@@ -43,10 +43,9 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Después de la autenticación, buscas al usuario en el servicio de usuarios
         User userFromDb = userService.findByUsername(loginRequest.getUsername());
 
-        // Y luego devuelves el usuario en la respuesta
+
         return ResponseEntity.ok(userFromDb);
     }
 

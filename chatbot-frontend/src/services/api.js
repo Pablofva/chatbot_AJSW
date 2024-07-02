@@ -7,8 +7,12 @@ const API = axios.create({
 export const login = (username, password) =>
     API.post('/users/login', { username, password });
 
-export const register = (userData) =>
-    API.post('/users/register', userData);
+export const register = (userData) => {
+    return API.post('/users/register', userData)
+        .then(response => {
+            return response.data;
+        });
+};
 
 export const getQuestions = () =>
     API.get('/chatbot/questions');

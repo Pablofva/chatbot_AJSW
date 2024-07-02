@@ -37,11 +37,13 @@ export default {
     async handleLogin() {
       if (this.isFormValid) {
         try {
-          await this.login({ username: this.username, password: this.password });
-          // Aquí puedes realizar acciones adicionales después del inicio de sesión
-          // Por ejemplo, cambiar el estado o mostrar un mensaje de éxito
+          console.log('Intentando iniciar sesión...');
+          const user = await this.login({ username: this.username, password: this.password });
+          console.log('Usuario logueado:', user);
+          this.$emit('login-successful', user);
         } catch (error) {
           console.error('Login failed:', error);
+          alert('Error al iniciar sesión. Por favor, verifica tus credenciales e intenta de nuevo.');
         }
       }
     },

@@ -1,12 +1,17 @@
 <template>
   <div id="app" :style="backgroundImageStyle">
-    <Registro v-if="!isLoggedIn && !isRegistered" @user-registered="handleUserRegistered"/>
-    <LoginUser v-else-if="!isLoggedIn && isRegistered"/>
+    <InitialChoice v-if="!choiceMade && !isLoggedIn" @choice="handleChoice"/>
+    <Registro
+        v-else-if="choice === 'register' && !isLoggedIn"
+        @user-registered="handleUserAuthenticated"/>
+    <LoginUser
+        v-else-if="choice === 'login' && !isLoggedIn"
+        @login-successful="handleUserAuthenticated"/>
     <HatSelection
         v-else-if="isLoggedIn && !selectedHouse"
         @house-selected="handleHouseSelected"
     />
-    <div v-else>
+    <div v-else-if="isLoggedIn && selectedHouse">
       <Banner :house="selectedHouse"/>
       <Chatbot
           v-if="showChatbot"
@@ -18,7 +23,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex';
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+import InitialChoice from './components/InitialChoice.vue';
 import Registro from './components/Registro.vue';
 import LoginUser from './components/LoginUser.vue';
 import HatSelection from './components/HatSelection.vue';
@@ -28,6 +34,7 @@ import Banner from './components/Banner.vue';
 export default {
   name: 'App',
   components: {
+    InitialChoice,
     Registro,
     LoginUser,
     HatSelection,
@@ -38,6 +45,8 @@ export default {
     return {
       showChatbot: false,
       chatbotType: 'hat',
+      choiceMade: false,
+      choice: null
     };
   },
   computed: {
@@ -57,10 +66,15 @@ export default {
   },
   methods: {
     ...mapMutations(['SET_REGISTERED']),
-    handleUserRegistered() {
-      console.log('Evento user-registered recibido');
+    ...mapActions(['fetchQuestions']),
+    handleChoice(choice) {
+      this.choiceMade = true;
+      this.choice = choice;
+    },
+    handleUserAuthenticated() {
+      console.log('Usuario autenticado (registrado o logueado)');
       this.SET_REGISTERED(true);
-      console.log('Estado después de SET_REGISTERED:', this.$store.state.isRegistered);
+      this.fetchQuestions(); // Asegúrate de cargar las preguntas para HatSelection
     },
     handleHouseSelected(house) {
       this.$store.commit('SET_SELECTED_HOUSE', house);
@@ -70,7 +84,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 #app {
   cursor: url('./assets/cursor.png'), auto;

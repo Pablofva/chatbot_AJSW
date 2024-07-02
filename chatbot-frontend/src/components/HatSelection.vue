@@ -41,7 +41,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['fetchQuestions', 'submitHatSelectionAnswers']),
+    ...mapActions(['fetchQuestions']),
     async submitAnswers() {
       if (this.areAllQuestionsAnswered) {
         try {

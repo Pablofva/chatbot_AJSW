@@ -55,7 +55,6 @@ export default {
       try {
         const user = await this.register(this.user);
         console.log('Usuario registrado:', user);
-        console.log('Estado después del registro:', this.$store.state.user, this.$store.state.isRegistered);
         if (user) {
           this.$emit('user-registered');
         } else {

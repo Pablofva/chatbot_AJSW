@@ -5,6 +5,7 @@ export default createStore({
     state: {
         user: null,
         selectedHouse: null,
+        questions: null,
         isLoading: false,
         isRegistered: false,
         error: null,
@@ -29,6 +30,9 @@ export default createStore({
             console.log('Mutation SET_REGISTERED called with:', isRegistered);
             state.isRegistered = isRegistered;
         },
+        SET_QUESTIONS(state, questions) {
+            state.questions = questions;
+        },
         SET_SELECTED_HOUSE(state, house) {
             state.selectedHouse = house;
         },
@@ -46,6 +50,16 @@ export default createStore({
                 commit('SET_ERROR', error.message);
             } finally {
                 commit('SET_LOADING', false);
+            }
+        },
+        async fetchQuestions({ commit }) {
+            try {
+                console.log('Fetching questions...');
+                const response = await api.getQuestions();
+                console.log('Questions received:', response.data);
+                commit('SET_QUESTIONS', response.data);
+            } catch (error) {
+                console.error('Error fetching questions:', error);
             }
         },
         async register({ commit }, userData) {
@@ -70,8 +84,17 @@ export default createStore({
         },
     },
     getters: {
-        isLoggedIn: state => !!state.user,
-        userName: state => state.user ? state.user.username : null,
-        isRegistered: state => state.isRegistered,
+        isLoggedIn: state => {
+            console.log('isLoggedIn getter called, user:', state.user);
+            return !!state.user;
+        },
+        userName: state => {
+            console.log('userName getter called, user:', state.user);
+            return state.user ? state.user.username : null;
+        },
+        isRegistered: state => {
+            console.log('isRegistered getter called, value:', state.isRegistered);
+            return state.isRegistered;
+        },
     },
 });
