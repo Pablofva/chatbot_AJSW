@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import * as api from '@/services/api';
 
+
 export default createStore({
     state: {
         user: null,
@@ -39,15 +40,18 @@ export default createStore({
     },
     actions: {
         async login({ commit }, { username, password }) {
-            console.log('Intento de inicio de sesión con:', username);
+            console.log('Acción login llamada con:', username);
             commit('SET_LOADING', true);
             try {
-                const user = await api.login(username, password);
-                console.log('Inicio de sesión exitoso. Usuario:', user);
+                const response = await api.login(username, password);
+                console.log('Respuesta de login:', response);
+                const user = response.data;
                 commit('SET_USER', user);
+                return user;
             } catch (error) {
-                console.error('Error en inicio de sesión:', error);
+                console.error('Error en login:', error);
                 commit('SET_ERROR', error.message);
+                throw error; // Asegúrate de que el error se propague
             } finally {
                 commit('SET_LOADING', false);
             }
@@ -60,6 +64,21 @@ export default createStore({
                 commit('SET_QUESTIONS', response.data);
             } catch (error) {
                 console.error('Error fetching questions:', error);
+            }
+        },
+        async submitAnswers({ commit }, answers) {
+            commit('SET_LOADING', true);
+            try {
+                const response = await api.submitHatSelectionAnswers(answers);
+                console.log('Respuesta de submitAnswers:', response);
+                commit('SET_HOUSE', response.data.house);
+                commit('SET_LOADING', false);
+                return response.data.house;
+            } catch (error) {
+                console.error('Error en submitAnswers:', error);
+                commit('SET_ERROR', error.message);
+                commit('SET_LOADING', false);
+                throw error; // Asegúrate de que el error se propague
             }
         },
         async register({ commit }, userData) {

@@ -1,5 +1,7 @@
 <template>
   <div id="app" :style="backgroundImageStyle">
+    <div class =banner-container :style="bannerImage"></div>
+
     <InitialChoice v-if="!choiceMade && !isLoggedIn" @choice="handleChoice"/>
     <Registro
         v-else-if="choice === 'register' && !isLoggedIn"
@@ -11,14 +13,11 @@
         v-else-if="isLoggedIn && !selectedHouse"
         @house-selected="handleHouseSelected"
     />
-    <div v-else-if="isLoggedIn && selectedHouse">
-      <Banner :house="selectedHouse"/>
-      <Chatbot
-          v-if="showChatbot"
-          :chatbotType="chatbotType"
-          :selectedHouse="selectedHouse"
-      />
-    </div>
+    <Chatbot
+        v-if="showChatbot && isLoggedIn && selectedHouse"
+        :chatbotType="chatbotType"
+        :selectedHouse="selectedHouse"
+    />
   </div>
 </template>
 
@@ -29,7 +28,7 @@ import Registro from './components/Registro.vue';
 import LoginUser from './components/LoginUser.vue';
 import HatSelection from './components/HatSelection.vue';
 import Chatbot from './components/Chatbot.vue';
-import Banner from './components/Banner.vue';
+
 
 export default {
   name: 'App',
@@ -39,7 +38,7 @@ export default {
     LoginUser,
     HatSelection,
     Chatbot,
-    Banner
+
   },
   data() {
     return {
@@ -62,7 +61,17 @@ export default {
         backgroundRepeat: 'repeat',
         backgroundSize: '87px 50px'
       };
-    }
+    } ,
+    bannerImage() {
+      let bnImage = this.selectedHouse
+          ? require(`@/assets/banners/${this.selectedHouse.toLowerCase()}.png`)
+          : require('@/assets/banners/DEFAULT.png'); // Asegúrate de tener esta imagen
+      return {
+          backgroundImage:`url("${bnImage}")`,
+         // backgroundRepeat: 'repeat',
+
+    };},
+
   },
   methods: {
     ...mapMutations(['SET_REGISTERED']),
@@ -71,10 +80,15 @@ export default {
       this.choiceMade = true;
       this.choice = choice;
     },
-    handleUserAuthenticated() {
-      console.log('Usuario autenticado (registrado o logueado)');
-      this.SET_REGISTERED(true);
-      this.fetchQuestions(); // Asegúrate de cargar las preguntas para HatSelection
+    handleUserAuthenticated(user) {
+      if (user) {
+        console.log('Usuario autenticado:', user);
+        this.SET_USER(user);
+        this.SET_REGISTERED(true);
+        this.fetchQuestions();
+      } else {
+        console.error('Se llamó a handleUserAuthenticated sin un usuario válido');
+      }
     },
     handleHouseSelected(house) {
       this.$store.commit('SET_SELECTED_HOUSE', house);
@@ -97,7 +111,26 @@ export default {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  overflow: hidden; /* Asegúrate de que los elementos no se desborden */
+   /* Ajusta según sea necesario */
 }
+.banner-container {
+  width: 100%;
+  height: 150px; /* Ajusta la altura según sea necesario */
+  display: flex;
+  padding: 20px;
+  transition: all 0.3s ease;
+  background-repeat: repeat-x; /* Repetir solo horizontalmente */
+  background-size: contain; /* Asegurarse de que toda la imagen sea visible */
+}
+
+h1 {
+  color: #fff;
+  font-family: 'Harry Potter', sans-serif;
+  font-size: 2em;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
 </style>

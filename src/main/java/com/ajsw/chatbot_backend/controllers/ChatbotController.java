@@ -32,13 +32,6 @@ public class ChatbotController {
     public Map<String, List<String>> getQuestions() {
         return hatChatbot.getQuestions();
     }
-
-    /**
-     * Process the hat selection for a user based on their answers to the hat selection questions.
-     *
-     * @param requestBody The request body containing the userId and answers to the questions
-     * @return A ChatbotResponse object with the assigned house and a welcome message, or an error message if the user is not found or an error occurs
-     */
     @PostMapping("/hat-selection")
     public ChatbotResponse processHatSelection(
             @RequestBody Map<String, Object> requestBody

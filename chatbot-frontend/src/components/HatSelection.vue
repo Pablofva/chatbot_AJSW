@@ -7,12 +7,12 @@
     <div class="banner-container">
       <img src="../assets/banners/hatbot.png" alt="Sombrero Seleccionador" class="hat-image">
     </div>
-    <form @submit.prevent="submitAnswers" v-if="questions && questions.length">
+    <form @submit.prevent="submitAnswers" v-if="questions && Object.keys(questions).length">
       <div v-for="(question, index) in questions" :key="index">
-        <h3>{{ question.text }}</h3>
-        <div v-for="option in question.options" :key="option">
+        <h3>{{ index }}</h3>
+        <div v-for="(option, keyIndex) in question" :key="keyIndex">
           <label class="option-label">
-            <input type="radio" :name="index" :value="option" v-model="answers[index]" required>
+            <input type="radio" :name="`answer-${index}`" :value="option" v-model="answers[index]" required>
             {{ option }}
           </label>
         </div>
@@ -26,6 +26,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 
+
 export default {
   data() {
     return {
@@ -36,16 +37,18 @@ export default {
     ...mapState(['questions']),
     ...mapGetters(['userName']),
     areAllQuestionsAnswered() {
-      return this.questions && this.questions.length > 0 &&
-          Object.keys(this.answers).length === this.questions.length;
-    },
+      const isAnswersComplete = this.questions && Object.keys(this.questions).length > 0 &&
+          Object.keys(this.answers).length === Object.keys(this.questions).length;
+      console.log("Are all questions answered?", isAnswersComplete);
+      return isAnswersComplete;
+    }
   },
   methods: {
     ...mapActions(['fetchQuestions']),
     async submitAnswers() {
       if (this.areAllQuestionsAnswered) {
         try {
-          const house = await this.submitHatSelectionAnswers(this.answers);
+          const house = await this.$store.dispatch('submitAnswers', this.answers);
           this.$emit('house-selected', house);
         } catch (error) {
           console.error('Error submitting answers:', error);
@@ -54,7 +57,9 @@ export default {
     },
   },
   created() {
-    this.fetchQuestions();
+    this.fetchQuestions().then(() => {
+      console.log(this.$store.state.questions);  // imprime las preguntas en el console
+    });
   },
 };
 </script>
@@ -84,6 +89,8 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #444;
   color: white;
+  max-height: 80vh; /* Limita la altura para permitir desplazamiento */
+  overflow-y: auto; /* Permite el desplazamiento vertical */
 }
 .banner-container {
   width: 100%;

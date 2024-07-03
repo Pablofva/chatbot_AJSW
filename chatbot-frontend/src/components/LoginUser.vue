@@ -44,6 +44,7 @@ export default {
         } catch (error) {
           console.error('Login failed:', error);
           alert('Error al iniciar sesión. Por favor, verifica tus credenciales e intenta de nuevo.');
+          // No emitas el evento login-successful aquí
         }
       }
     },
