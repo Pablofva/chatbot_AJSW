@@ -27,6 +27,7 @@ export default {
 
 .magical-container {
   background-color: rgb(255, 255, 255, 0.7);
+  background-image: url("../assets/backgrounds/preview.jpg");
   border-radius: 20px;
   padding: 40px;
   text-align: center;
@@ -79,16 +80,16 @@ button {
   padding: 12px 24px;
   font-size: 1.2em;
   cursor: pointer;
-  background-color: transparent;
+  background-color: rgb();
   animation: changeColor 10s infinite;
-
+  background-color: rgba(255, 215, 0, 0.59);
   border-radius: 25px;
   transition: all 0.3s ease;
   font-family: 'Harry Potter', sans-serif;
 }
 
 button:hover {
-  background-color: rgba(255, 215, 0, 0.2);
+  background-color: rgb(255, 255, 255, 0.7);
   transform: scale(1.05);
 }
 </style>

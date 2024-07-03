@@ -34,19 +34,24 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User userFromDb = userService.findByUsername(loginRequest.getUsername());
 
 
-        return ResponseEntity.ok(userFromDb);
+        return ResponseEntity.ok(userFromDb);}
+        catch (Exception e) {   e.printStackTrace();
+            // Return a response entity with status 500 (Internal Server Error) and exception message as body.
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
     @GetMapping("/user/{id}")

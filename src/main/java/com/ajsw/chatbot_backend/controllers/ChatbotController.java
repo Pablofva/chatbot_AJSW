@@ -7,6 +7,8 @@ import com.ajsw.chatbot_backend.services.HatChatbot;
 import com.ajsw.chatbot_backend.services.PrefectChatbotService;
 import com.ajsw.chatbot_backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +39,16 @@ public class ChatbotController {
             @RequestBody Map<String, Object> requestBody
     ) {
         try {
-            long userId = Long.parseLong(requestBody.get("userId").toString());
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            String username;
+            if (principal instanceof UserDetails) {
+
+                username = ((UserDetails)principal).getUsername();
+            } else {
+                username = principal.toString();
+            }
+
             Map<String, String> answers = (Map<String, String>) requestBody.get("answers");
 
             // Lógica del Sombrero Seleccionador
@@ -46,7 +57,7 @@ public class ChatbotController {
             String response = String.format("Bienvenido a %s!", assignedHouse);
 
             // Actualizar la casa del usuario en la base de datos
-            User user = userService.getUserById(userId);
+            User user = userService.findByUsername(username);
             if (user != null) {
                 user.setHouse(assignedHouse);
                 userService.updateUser(user);

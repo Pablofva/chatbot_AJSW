@@ -4,9 +4,6 @@
     <div class="user-greeting">
       <h2>¡Hola, {{ userName }}!</h2>
     </div>
-    <div class="banner-container">
-      <img src="../assets/banners/hatbot.png" alt="Sombrero Seleccionador" class="hat-image">
-    </div>
     <form @submit.prevent="submitAnswers">
       <div v-for="(question, index) in questions" :key="index">
         <h3>{{ question.text }}</h3>

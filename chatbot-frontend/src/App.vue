@@ -53,18 +53,20 @@ export default {
     ...mapGetters(['isLoggedIn', 'isRegistered', 'userName']),
     backgroundImageStyle() {
       let bgImage = this.selectedHouse
-          ? require(`./assets/backgrounds/${this.selectedHouse}.jpg`)
-          : require("./assets/backgrounds/default.jpeg");
+
+          ? require(`@/assets/backgrounds/${this.selectedHouse}.jpg`)
+          : require("@/assets/backgrounds/preview.jpg");
 
       return {
         backgroundImage: `url("${bgImage}")`,
         backgroundRepeat: 'repeat',
-        backgroundSize: '87px 50px'
+        backgroundSize: '400px 400px'
       };
     } ,
     bannerImage() {
       let bnImage = this.selectedHouse
           ? require(`@/assets/banners/${this.selectedHouse.toLowerCase()}.png`)
+
           : require('@/assets/banners/DEFAULT.png'); // Asegúrate de tener esta imagen
       return {
           backgroundImage:`url("${bnImage}")`,
