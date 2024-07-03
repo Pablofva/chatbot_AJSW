@@ -1,14 +1,15 @@
 <template>
   <div class="initial-choice">
     <div class="magical-container">
-      <h1>Bienvenido a Hogwarts</h1>
+      <h1 class="color-changing">Bienvenido a Hogwarts</h1>
       <div class="buttons">
-        <button @click="$emit('choice', 'register')">Registrarse</button>
-        <button @click="$emit('choice', 'login')">Iniciar sesión</button>
+        <button class="color-changing" @click="$emit('choice', 'register')">Registrarse</button>
+        <button class="color-changing" @click="$emit('choice', 'login')">Iniciar sesión</button>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
   name: 'InitialChoice'
@@ -22,37 +23,54 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .magical-container {
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 70%;
+  background-color: rgb(255, 255, 255, 0.7);
+  border-radius: 20px;
   padding: 40px;
   text-align: center;
   box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-  animation: glow 2s infinite alternate;
+  animation: changeColor 10s infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-@keyframes glow {
-  from {
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-  }
-  to {
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
-  }
-}
 
-h1 {
+h1.color-changing, .buttons button.color-changing {
   font-family: 'Harry Potter', sans-serif;
   font-size: 2.5em;
-  color: #ffd700;
   margin-bottom: 30px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: changeColor 10s infinite;
+}
+
+@keyframes changeColor {
+  0% {
+    color: #ffd700; /* Amarillo (Gryffindor) */
+    border-color: #ffd700;
+  }
+  25% {
+    color: #0b304e; /* Azul oscuro (Ravenclaw) */
+    border-color: #0b304e;
+  }
+  50% {
+    color: #1d5e4b; /* Verde (Slytherin) */
+    border-color: #1d5e4b;
+  }
+  75% {
+    color: #721c1c; /* Borgoña (Hufflepuff) */
+    border-color: #721c1c;
+  }
+  100% {
+    color: #ffd700; /* Amarillo (Gryffindor) */
+    border-color: #ffd700;
+  }
 }
 
 .buttons {
-  display: inline-block;
+  display: flex;
   flex-direction: column;
   gap: 20px;
 }
@@ -62,8 +80,8 @@ button {
   font-size: 1.2em;
   cursor: pointer;
   background-color: transparent;
-  color: #ffd700;
-  border: 2px solid #ffd700;
+  animation: changeColor 10s infinite;
+
   border-radius: 25px;
   transition: all 0.3s ease;
   font-family: 'Harry Potter', sans-serif;
