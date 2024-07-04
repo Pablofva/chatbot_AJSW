@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
+   /* @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
+*/
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
