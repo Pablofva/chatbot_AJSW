@@ -1,6 +1,6 @@
 <template>
   <div id="app" :style="backgroundImageStyle">
-    <div class =banner-container :style="bannerImage"></div>
+    <div class="banner-container" :style="bannerImage"></div>
 
     <InitialChoice v-if="!choiceMade && !isLoggedIn" @choice="handleChoice"/>
     <Registro
@@ -18,6 +18,7 @@
         :chatbotType="chatbotType"
         :selectedHouse="selectedHouse"
     />
+    <div v-for="star in stars" :key="star.id" :class="star.class" :style="star.style"></div>
   </div>
 </template>
 
@@ -29,7 +30,6 @@ import LoginUser from './components/LoginUser.vue';
 import HatSelection from './components/HatSelection.vue';
 import Chatbot from './components/Chatbot.vue';
 
-
 export default {
   name: 'App',
   components: {
@@ -38,42 +38,44 @@ export default {
     LoginUser,
     HatSelection,
     Chatbot,
-
   },
   data() {
     return {
       showChatbot: false,
       chatbotType: 'hat',
       choiceMade: false,
-      choice: null
+      choice: null,
+      stars: this.generateStars(),
     };
   },
   computed: {
     ...mapState(['selectedHouse']),
     ...mapGetters(['isLoggedIn', 'isRegistered', 'userName']),
     backgroundImageStyle() {
-      let bgImage = this.selectedHouse
-
-          ? require(`@/assets/backgrounds/${this.selectedHouse}.jpg`)
-          : require("@/assets/backgrounds/preview.jpg");
-
-      return {
-        backgroundImage: `url("${bgImage}")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '400px 400px'
-      };
-    } ,
+      if (this.selectedHouse) {
+        let bgImage = require(`@/assets/backgrounds/${this.selectedHouse}.jpg`);
+        return {
+          backgroundImage: `url("${bgImage}")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '400px 400px'
+        };
+      } else {
+        return {
+          background: 'linear-gradient(to bottom, #000033, #000066)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        };
+      }
+    },
     bannerImage() {
       let bnImage = this.selectedHouse
           ? require(`@/assets/banners/${this.selectedHouse.toLowerCase()}.png`)
-
-          : require('@/assets/banners/DEFAULT.png'); // Asegúrate de tener esta imagen
+          : require('@/assets/banners/DEFAULT.png');
       return {
-          backgroundImage:`url("${bnImage}")`,
-         // backgroundRepeat: 'repeat',
-
-    };},
-
+        backgroundImage:`url("${bnImage}")`,
+        // backgroundRepeat: 'repeat',
+      };
+    },
   },
   methods: {
     ...mapMutations(['SET_REGISTERED']),
@@ -97,9 +99,25 @@ export default {
       this.showChatbot = true;
       this.chatbotType = 'prefect';
     },
+    generateStars() {
+      let stars = [];
+      for (let i = 0; i < 100; i++) {
+        stars.push({
+          id: i,
+          class: 'star',
+          style: {
+            top: `${Math.random() * 100}vh`,
+            left: `${Math.random() * 100}vw`,
+            animationDelay: `${Math.random() * 2}s`,
+          }
+        });
+      }
+      return stars;
+    }
   }
 };
 </script>
+
 <style scoped>
 #app {
   cursor: url('./assets/cursor.png'), auto;
@@ -115,7 +133,8 @@ export default {
   flex-direction: column;
   align-items: center;
   overflow: hidden; /* Asegúrate de que los elementos no se desborden */
-   /* Ajusta según sea necesario */
+  position: relative;
+  background: linear-gradient(to bottom, #000033, #000066);
 }
 .banner-container {
   width: 100%;
@@ -126,7 +145,20 @@ export default {
   background-repeat: repeat-x; /* Repetir solo horizontalmente */
   background-size: contain; /* Asegurarse de que toda la imagen sea visible */
 }
-
+/* Animación de estrellas */
+@keyframes twinkle {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite;
+}
 h1 {
   color: #fff;
   font-family: 'Harry Potter', sans-serif;
@@ -134,5 +166,4 @@ h1 {
   margin-top: 10px;
   transition: all 0.3s ease;
 }
-
 </style>
