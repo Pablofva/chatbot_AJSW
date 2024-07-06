@@ -30,6 +30,7 @@ import LoginUser from './components/LoginUser.vue';
 import HatSelection from './components/HatSelection.vue';
 import Chatbot from './components/Chatbot.vue';
 
+
 export default {
   name: 'App',
   components: {
@@ -38,6 +39,7 @@ export default {
     LoginUser,
     HatSelection,
     Chatbot,
+
   },
   data() {
     return {
@@ -49,7 +51,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['selectedHouse']),
+    ...mapState(['user','selectedHouse']),
     ...mapGetters(['isLoggedIn', 'isRegistered', 'userName']),
     backgroundImageStyle() {
       if (this.selectedHouse) {
@@ -84,12 +86,12 @@ export default {
       this.choiceMade = true;
       this.choice = choice;
     },
-    handleUserAuthenticated(user) {
-      if (user) {
-        console.log('Usuario autenticado:', user);
-        this.SET_USER(user);
-        this.SET_REGISTERED(true);
+    handleUserAuthenticated() {
+      if (this.user) {
+        console.log('Usuario autenticado:', this.user);
         this.fetchQuestions();
+        this.choice='login'
+        console.log(this.isLoggedIn);
       } else {
         console.error('Se llamó a handleUserAuthenticated sin un usuario válido');
       }

@@ -14,6 +14,4 @@ public class RegisterRequest {
     private String username;
     private String password;
     private String gender;
-    private HogwartsHouse house;
-    private List<String> interests;
 }

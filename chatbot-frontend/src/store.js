@@ -1,10 +1,10 @@
 import { createStore } from 'vuex';
 import * as api from '@/services/api';
 
-
 export default createStore({
     state: {
         user: null,
+        token: localStorage.getItem('token') || null,
         selectedHouse: null,
         questions: null,
         isLoading: false,
@@ -16,6 +16,10 @@ export default createStore({
             console.log('Mutation SET_USER called with:', user);
             state.user = user;
         },
+        SET_TOKEN(state, token) {
+            state.token = token;
+            localStorage.setItem('token', token);
+        },
         SET_LOADING(state, isLoading) {
             state.isLoading = isLoading;
         },
@@ -24,8 +28,10 @@ export default createStore({
         },
         CLEAR_USER(state) {
             state.user = null;
+            state.token = null;
             state.selectedHouse = null;
             state.isRegistered = false;
+            localStorage.removeItem('token');
         },
         SET_REGISTERED(state, isRegistered) {
             console.log('Mutation SET_REGISTERED called with:', isRegistered);
@@ -40,45 +46,31 @@ export default createStore({
     },
     actions: {
         async login({ commit }, { username, password }) {
-            console.log('Acción login llamada con:', username);
+            console.log('Intento de inicio de sesión con:', username);
             commit('SET_LOADING', true);
             try {
                 const response = await api.login(username, password);
-                console.log('Respuesta de login:', response);
-                const user = response.data;
+                console.log('Respuesta del servidor:', response);
+                const { user, token } = response.data;
+                console.log('Usuario recibido:', user);
                 commit('SET_USER', user);
-                return user;
+                commit('SET_TOKEN', token);
             } catch (error) {
-                console.error('Error en login:', error);
+                console.error('Error en inicio de sesión:', error);
+                console.error('Detalles del error:', error.response ? error.response.data : error.message);
                 commit('SET_ERROR', error.message);
-                throw error; // Asegúrate de que el error se propague
+                throw error;
             } finally {
                 commit('SET_LOADING', false);
             }
         },
+
         async fetchQuestions({ commit }) {
             try {
-                console.log('Fetching questions...');
                 const response = await api.getQuestions();
-                console.log('Questions received:', response.data);
                 commit('SET_QUESTIONS', response.data);
             } catch (error) {
                 console.error('Error fetching questions:', error);
-            }
-        },
-        async submitAnswers({ commit }, answers) {
-            commit('SET_LOADING', true);
-            try {
-                const response = await api.submitHatSelectionAnswers(answers);
-                console.log('Respuesta de submitAnswers:', response);
-                commit('SET_HOUSE', response.data.house);
-                commit('SET_LOADING', false);
-                return response.data.house;
-            } catch (error) {
-                console.error('Error en submitAnswers:', error);
-                commit('SET_ERROR', error.message);
-                commit('SET_LOADING', false);
-                throw error; // Asegúrate de que el error se propague
             }
         },
         async register({ commit }, userData) {
@@ -98,6 +90,17 @@ export default createStore({
                 commit('SET_LOADING', false);
             }
         },
+        async submitAnswers({ commit }, answers) {
+            commit('SET_LOADING', true);
+            try {
+                const response = await api.submitAnswers(answers);
+              commit('SET_SELECTED_HOUSE',response.data.house);
+            } catch (error) {
+                console.error('Error al enviar las respuestas de selección de sombrero:', error);
+                commit('SET_ERROR', error.message);
+                throw error;
+            }
+        },
         logout({ commit }) {
             commit('CLEAR_USER');
         },
@@ -105,7 +108,7 @@ export default createStore({
     getters: {
         isLoggedIn: state => {
             console.log('isLoggedIn getter called, user:', state.user);
-            return !!state.user;
+            return !!state.user && !!state.token;
         },
         userName: state => {
             console.log('userName getter called, user:', state.user);

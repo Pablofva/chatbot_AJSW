@@ -3,6 +3,7 @@
   <div class="hat-selection-container">
     <div class="user-greeting">
       <h2>¡Hola, {{ userName }}!</h2>
+      <LogoutButton />
     </div>
     <div class="banner-container">
       <img src="../assets/banners/hatbot.png" alt="Sombrero Seleccionador" class="hat-image">
@@ -25,9 +26,14 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
+import LogoutButton from "@/components/LogoutButton.vue";
+
 
 
 export default {
+  components: {
+    LogoutButton
+  },
   data() {
     return {
       answers: {},

@@ -8,9 +8,10 @@
       <div class="input-container">
         <input type="password" v-model="password" placeholder="Contraseña" required>
       </div>
-      <button type="submit" class="login-button" :disabled="isLoading || !isFormValid">
+      <button type="submit" class="login-button" :disabled="!isFormValid">
         {{ isLoading ? 'Cargando...' : 'Iniciar sesión' }}
       </button>
+      <div v-if="error" class="error-message">{{ error }}</div>
     </form>
   </div>
 </template>
@@ -29,12 +30,15 @@ export default {
   computed: {
     ...mapState(['isLoading', 'error']),
     isFormValid() {
-      return this.username.length > 0 && this.password.length >= 8;
+      const isValid = this.username.length > 0 && this.password.length >= 6;
+      console.log('Form is valid:', isValid);
+      return isValid;
     },
   },
   methods: {
     ...mapActions(['login']),
     async handleLogin() {
+      console.log('handleLogin called');
       if (this.isFormValid) {
         try {
           console.log('Intentando iniciar sesión...');
@@ -43,9 +47,10 @@ export default {
           this.$emit('login-successful', user);
         } catch (error) {
           console.error('Login failed:', error);
-          alert('Error al iniciar sesión. Por favor, verifica tus credenciales e intenta de nuevo.');
-          // No emitas el evento login-successful aquí
+          // El error ya debería estar en el estado de Vuex, por lo que no necesitamos usar alert aquí
         }
+      } else {
+        console.log('Formulario no válido');
       }
     },
   },
@@ -53,7 +58,13 @@ export default {
 </script>
 
 <style scoped>
+@keyframes appear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .login-container {
+  animation: appear 1s ease-out;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -113,19 +124,10 @@ input {
   cursor: not-allowed;
 }
 
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.error-message {
+  color: #ff0000;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 /* Estilos para el cursor personalizado */

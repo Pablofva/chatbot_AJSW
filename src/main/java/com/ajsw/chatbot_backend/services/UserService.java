@@ -24,6 +24,7 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     public User register(RegisterRequest registerRequest) {
         if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
@@ -59,7 +60,6 @@ public class UserService implements UserDetailsService {
         if (userOptional.isPresent()) {
             return userOptional.get();
         } else {
-
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
     }

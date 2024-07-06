@@ -71,18 +71,26 @@ export default {
 
 
 <style scoped>
-body {
-  background: #3c1053;
-  animation: twinkling 10s infinite;
-}
 
-@keyframes twinkling {
-  0% { background-color: #3c1053; }
-  50% { background-color: #5c2a73; }
-  100% { background-color: #3c1053; }
+@keyframes changeBorderColor {
+  0% {
+    border-color: #ffd700; /* Amarillo (Gryffindor) */
+  }
+  25% {
+    border-color: #0b304e; /* Azul oscuro (Ravenclaw) */
+  }
+  50% {
+    border-color: #1d5e4b; /* Verde (Slytherin) */
+  }
+  75% {
+    border-color: #721c1c; /* Borgoña (Hufflepuff) */
+  }
+  100% {
+    border-color: #ffd700; /* Amarillo (Gryffindor) */
+  }
 }
 .register-container {
-  animation: appear 1s ease-out;
+  animation: appear 1s ease-out, changeBorderColor 10s infinite;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -90,7 +98,7 @@ body {
   max-width: 500px;
   margin: 20px auto;
   padding: 20px;
-  border: 2px solid #8b4513;
+  border: 5px solid #8b4513;
   background-color: #f8f8d8;
   box-shadow: 0 0 15px rgba(139, 69, 19, 0.5);
   border-radius: 10px;
